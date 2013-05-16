@@ -58,8 +58,19 @@ namespace Cet.IO.Net
                 for (int attempt = 0, retries = data.Retries; attempt < retries; attempt++)
                 {
                     //phyiscal writing
-                    this.Port
-                        .Send(outgoing);
+                    try 
+                    {
+                        this.Port
+                            .Send(outgoing);
+                    }
+                    catch(SocketException se)
+                    {
+                        //no attempt was successful
+                        return new CommResponse(
+                            data,
+                            CommResponse.Critical,
+                            se.Message);
+                    }
 
                     incoming.Drop();
 
